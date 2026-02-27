@@ -696,11 +696,11 @@
 				<1 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 
-                rgb_touch_gpio: rgb-touch-gpio {
+                /* rgb_touch_gpio: rgb-touch-gpio {
                         rockchip,pins =
                                 <4 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>,
                                 <4 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
-                };
+                };*/
 
                 ft5x06_int: ft5x06-int {
                         rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_up>,
@@ -1205,7 +1205,7 @@
                 status = "disabled";
         };
 
-        gt9xx_rgb: gt9xx-rgb@14 {
+      /*  gt9xx_rgb: gt9xx-rgb@14 {
                 compatible = "goodix,gt928";
                 reg = <0x14>;
                 pinctrl-names = "default";
@@ -1220,7 +1220,7 @@
                 touchscreen-inverted-y;
                 //uniq = "rgb";
                 status = "disabled";
-        };
+        }; */
 
         gt9xx_dsi: gt9xx@14 {
                 compatible = "goodix,gt928";
