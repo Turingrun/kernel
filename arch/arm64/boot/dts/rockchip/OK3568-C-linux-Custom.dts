@@ -1,0 +1,79 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2020 Rockchip Electronics Co., Ltd.
+ *
+ */
+
+#include "OK3568-C-common.dtsi"
+#include "rk3568-linux.dtsi"
+#include <dt-bindings/display/rockchip_vop.h>
+
+&vp0 {
+	cursor-win-id = <ROCKCHIP_VOP2_CLUSTER0>;
+};
+
+&vp1 {
+	cursor-win-id = <ROCKCHIP_VOP2_CLUSTER1>;
+};
+
+/ {
+        pps {
+                status = "okay";
+                compatible = "pps-gpio";
+                pinctrl-names = "default";
+                pinctrl-0 = <&pps_gpio_pins>;
+                gpios = <&gpio3 RK_PB4 GPIO_ACTIVE_HIGH>;
+        };
+};
+
+&leds {
+        wifi_status_led:wifi-status-led {
+                gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_LOW>;
+        };
+};
+
+&uart3 {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart3m1_xfer &uart3_dir_gpio>;
+        rs485-de-gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_HIGH>;
+        rs485-rts-delay = <0 0>;
+        linux,rs485-enabled-at-boot-time;
+};
+
+&uart4 {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart4m1_xfer &uart4_dir_gpio>;
+        rs485-de-gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_HIGH>;
+        rs485-rts-delay = <0 0>;
+        linux,rs485-enabled-at-boot-time;
+};
+
+&uart5 {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart5m1_xfer>;
+};
+
+&uart9 {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart9m1_xfer>;
+};
+
+&pinctrl {
+        rs485_rts {
+                uart3_dir_gpio: uart3-dir-gpio {
+                        rockchip,pins = <3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+                };
+                uart4_dir_gpio: uart4-dir-gpio {
+                        rockchip,pins = <3 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+                };
+        };
+        pps_pins {
+                pps_gpio_pins: pps-gpio-pins {
+                rockchip,pins = <3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
+                };
+        };
+};
