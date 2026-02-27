@@ -572,6 +572,9 @@ static int dw8250_probe(struct platform_device *pdev)
 	p->serial_out	= dw8250_serial_out;
 	p->set_ldisc	= dw8250_set_ldisc;
 	p->set_termios	= dw8250_set_termios;
+#ifdef CONFIG_ARCH_ROCKCHIP
+	p->rs485_config = serial8250_em485_config;
+#endif
 
 	p->membase = devm_ioremap(dev, regs->start, resource_size(regs));
 	if (!p->membase)
@@ -693,6 +696,19 @@ static int dw8250_probe(struct platform_device *pdev)
 		data->dma.txconf.dst_maxburst = p->fifosize / 4;
 		uart.dma = &data->dma;
 	}
+
+#ifdef CONFIG_ARCH_ROCKCHIP
+	if (p->rs485_config) {
+		unsigned long flags;
+
+		uart_get_rs485_mode(p);
+		spin_lock_irqsave(&p->lock, flags);
+		err = p->rs485_config(p, &p->rs485);
+		spin_unlock_irqrestore(&p->lock, flags);
+		if (err)
+			dev_warn(dev, "rs485 init failed: %d\n", err);
+	}
+#endif
 
 	data->line = serial8250_register_8250_port(&uart);
 	if (data->line < 0) {

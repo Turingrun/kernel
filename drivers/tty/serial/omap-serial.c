@@ -1610,7 +1610,7 @@ static int serial_omap_probe_rs485(struct uart_omap_port *up,
 	if (!np)
 		return 0;
 
-	uart_get_rs485_mode(up->dev, rs485conf);
+	uart_get_rs485_mode(&up->port);
 
 	if (of_property_read_bool(np, "rs485-rts-active-high")) {
 		rs485conf->flags |= SER_RS485_RTS_ON_SEND;

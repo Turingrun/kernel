@@ -161,7 +161,7 @@ static int stm32_init_rs485(struct uart_port *port,
 	if (!pdev->dev.of_node)
 		return -ENODEV;
 
-	uart_get_rs485_mode(&pdev->dev, rs485conf);
+	uart_get_rs485_mode(port);
 
 	return 0;
 }
