@@ -35,6 +35,13 @@
                 pinctrl-0 = <&pps_gpio_pins>;
                 gpios = <&gpio3 RK_PB5 GPIO_ACTIVE_HIGH>;
         };
+
+        5g-pwr {
+                status = "disabled";
+        };
+        5g-rst {
+		status = "disabled";
+	};
 };
 
 &leds {
@@ -81,7 +88,7 @@
 &u2phy1_host {
         phy-supply = <&vcc5v0_usb_host>;
         status = "okay";
-};*/
+};
 
 
 &pinctrl {
