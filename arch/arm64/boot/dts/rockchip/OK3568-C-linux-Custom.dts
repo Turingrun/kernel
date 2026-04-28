@@ -44,6 +44,11 @@
 	};
 };
 
+/* &gmac0 {
+        max-speed = <100>;
+};
+*/
+
 &leds {
         wifi_status_led:wifi-status-led {
                 gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_LOW>;
