@@ -1,0 +1,126 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2020 Rockchip Electronics Co., Ltd.
+ *
+ */
+
+#include "IMC3568.dtsi"
+#include "rk3568-linux.dtsi"
+#include <dt-bindings/display/rockchip_vop.h>
+
+&vp0 {
+	cursor-win-id = <ROCKCHIP_VOP2_CLUSTER0>;
+};
+
+&vp1 {
+	cursor-win-id = <ROCKCHIP_VOP2_CLUSTER1>;
+};
+
+/ {
+        vcc5v0_usb_host:vcc5v0-usb-host {
+                compatible = "regulator-fixed";
+                regulator-name = "vcc5v0-usb-host";
+                regulator-min-microvolt = <5000000>;
+                regulator-max-microvolt = <5000000>;
+                gpio = <&gpio3 RK_PB4 GPIO_ACTIVE_HIGH>;
+                enable-active-high;
+                pinctrl-names = "default";
+                pinctrl-0 = <&usb_host_vbus>;
+        };
+
+        pps {
+                status = "okay";
+                compatible = "pps-gpio";
+                pinctrl-names = "default";
+                pinctrl-0 = <&pps_gpio_pins>;
+                gpios = <&gpio3 RK_PB5 GPIO_ACTIVE_HIGH>;
+        };
+
+        5g-pwr {
+                status = "disabled";
+        };
+        5g-rst {
+		status = "disabled";
+	};
+};
+
+/* &gmac0 {
+        max-speed = <100>;
+};
+*/
+
+&leds {
+        user_led:user-led {
+                gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_HIGH>;
+        };
+};
+
+&uart3 {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart3m1_xfer &rs485_rts1>;
+        rs485-de-gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_HIGH>;
+        rs485-rts-delay = <0 0>;
+        linux,rs485-enabled-at-boot-time;
+};
+
+&uart5 {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart5m1_xfer &rs485_rts2>;
+        rs485-de-gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_HIGH>;
+        rs485-rts-delay = <0 0>;
+        linux,rs485-enabled-at-boot-time;
+};
+
+&uart4 {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart4m1_xfer>;
+
+};
+
+&uart9 {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart9m1_xfer>;
+};
+
+&u2phy0_host {
+        phy-supply = <&vcc5v0_usb_host>;
+        status = "okay";
+};
+&u2phy1_host {
+        phy-supply = <&vcc5v0_usb_host>;
+        status = "okay";
+};
+
+&sdmmc2 {
+        max-frequency = <100000000>;
+        bus-width = <1>;
+        /delete-property/ sd-uhs-sdr104;
+        sd-uhs-sdr50;
+        status = "okay";
+};
+
+&pinctrl {
+        usb-vbus {
+                usb_host_vbus:usb-host-vbus{
+                        rockchip,pins = <3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
+                };
+        };
+        rs485_rts {
+                rs485_rts1: rs485-rts1 {
+                        rockchip,pins = <3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+                };
+                rs485_rts2: rs485-rts2 {
+                        rockchip,pins = <3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
+                };
+        };
+        pps_pins {
+                pps_gpio_pins: pps-gpio-pins {
+                rockchip,pins = <3 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
+                };
+        };
+
+};
