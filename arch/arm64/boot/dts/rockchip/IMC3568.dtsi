@@ -22,114 +22,12 @@
 
 
 	forlinx_control {
-		status = "disabled";
+		status = "okay";
 		video-hdmi = "hdmi";
-		video-mipi-edp = "mipi";
-		video-lvds-rgb = "lvds";
-	};
-/*
-	edp-panel {
-		compatible = "simple-panel";
-		prepare-delay-ms = <120>;
-		enable-delay-ms = <120>;
-		unprepare-delay-ms = <120>;
-		disable-delay-ms = <120>;
-		backlight = <&edp_backlight>;
-		enable-gpios = <&gpio0 RK_PC7 GPIO_ACTIVE_HIGH>;
-
-		port {
-			panel_in_edp: endpoint {
-				remote-endpoint = <&edp_out_panel>;
-			};
-		};
+		video-mipi-edp = "off";
+		video-lvds-rgb = "off";
 	};
 
-	panel {
-		compatible = "simple-panel";
-		backlight = <&lvds_backlight>;
-		power-supply = <&vcc3v3_lcd2_n>;
-		enable-delay-ms = <20>;
-		prepare-delay-ms = <20>;
-		unprepare-delay-ms = <20>;
-		disable-delay-ms = <20>;
-		bus-format = <MEDIA_BUS_FMT_RGB888_1X7X4_SPWG>;
-		width-mm = <152>;
-		height-mm = <91>;
-
-		display-timings {
-			native-mode = <&timing0>;
-
-			timing0: timing0 {
-				clock-frequency = <71000000>;
-				hactive = <1280>;
-				vactive = <800>;
-				hback-porch = <10>;
-				hfront-porch = <140>;
-				vback-porch = <1>;
-				vfront-porch = <2>;
-				hsync-len = <10>;
-				vsync-len = <20>;
-				hsync-active = <0>;
-				vsync-active = <1>;
-				de-active = <1>;
-				pixelclk-active = <0>;
-			};
-		};
-
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			port@0 {
-				reg = <0>;
-				dual-lvds-even-pixels;
-				panel_in_lvds: endpoint {
-					remote-endpoint = <&lvds_out_panel>;
-				};
-			};
-		};
-	};
-
-	rgb-panel {
-                compatible = "simple-panel";
-                backlight = <&lvds_backlight>;
-                power-supply = <&vcc3v3_lcd2_n>;
-                bus-format = <MEDIA_BUS_FMT_RGB888_1X7X4_SPWG>;
-
-                display-timings {
-                        native-mode = <&timing1>;
-
-                        timing1: timing1 {
-                               clock-frequency = <51200000>;
-                               hactive = <1024>;
-                               vactive = <600>;
-                               hfront-porch = <160>;
-                               hback-porch = <320>;
-                               hsync-len = <1>;
-                               vback-porch = <35>;
-                               vfront-porch = <12>;
-                               vsync-len = <1>;
-                               hsync-active = <0>;
-                               vsync-active = <0>;
-                               de-active = <1>;
-                               pixelclk-active = <1>;
-                        };
-                };
-
-                ports {
-                        #address-cells = <1>;
-                        #size-cells = <0>;
-
-                        port@0 {
-                                reg = <0>;
-                                panel_in_rgb: endpoint {
-                                        remote-endpoint = <&rgb_out_panel>;
-                                };
-                        };
-
-                };
-        };
-*/
 	adc_keys: adc-keys {
 		compatible = "adc-keys";
 		io-channels = <&saradc 0>;
