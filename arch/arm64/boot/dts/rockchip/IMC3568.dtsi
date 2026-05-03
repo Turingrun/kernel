@@ -96,26 +96,6 @@
 		};
 	};
 
-
-
-/*	spdif-sound {
-		status = "disabled";
-		compatible = "simple-audio-card";
-		simple-audio-card,name = "ROCKCHIP,SPDIF";
-		simple-audio-card,cpu {
-				sound-dai = <&spdif_8ch>;
-		};
-		simple-audio-card,codec {
-				sound-dai = <&spdif_out>;
-		};
-	};
-
-	spdif_out: spdif-out {
-			status = "disabled";
-			compatible = "linux,spdif-dit";
-			#sound-dai-cells = <0>;
-	};
-*/
 	vcc12v: vcc-12v {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc12v";
@@ -186,21 +166,6 @@
 		vin-supply = <&vcc3v3>;
 	};
 
-	vcc3v3_lcd2_n: vcc3v3-lcd2-n {
-		compatible = "regulator-fixed";
-		regulator-name = "vcc3v3_lcd2_n";
-		regulator-boot-on;
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		enable-active-high;
-		gpio = <&gpio3 RK_PC5 GPIO_ACTIVE_HIGH>;
-		vin-supply = <&vcc3v3_sys>;
-
-		regulator-state-mem {
-			regulator-off-in-suspend;
-		};
-	};
-
 	sdio_pwrseq: sdio-pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		clocks = <&rk809 1>;
@@ -227,34 +192,6 @@
 		regulator-max-microvolt = <2500000>;
 		vin-supply = <&vcc3v3_sys>;
 	};
-
-	5g-rst {
-		compatible = "regulator-fixed";
-		regulator-name = "5g-rst";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		gpio = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
-		enable-active-low;
-		regulator-boot-on;
-		regulator-always-on;
-		pinctrl-names = "default";
-		pinctrl-0 = <&net_5g_rst_gpio>;
-		status = "okay";
-	};
-
-	5g-pwr {
-                compatible = "regulator-fixed";
-                regulator-name = "5g-pwr";
-                regulator-min-microvolt = <3300000>;
-                regulator-max-microvolt = <3300000>;
-                gpio = <&gpio1 RK_PB1 GPIO_ACTIVE_HIGH>;
-                enable-active-high;
-                regulator-boot-on;
-                regulator-always-on;
-                pinctrl-names = "default";
-                pinctrl-0 = <&net_5g_pwr_gpio>;
-                status = "okay";
-        };
 
 	test-power {
                 status = "okay";
@@ -404,16 +341,6 @@
         sdio-pwrseq {
                 wifi_enable_h: wifi-enable-h {
                         rockchip,pins = <3 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>;
-                };
-        };
-
-	5g {
-                net_5g_rst_gpio: net_5g_rst_gpio {
-                        rockchip,pins = <1 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
-                };
-
-                net_5g_pwr_gpio: net_5g_pwr_gpio {
-                        rockchip,pins = <1 RK_PB1 RK_FUNC_GPIO &pcfg_pull_none>;
                 };
         };
 };
@@ -862,18 +789,6 @@
 	vccio5-supply = <&vcc_3v3>;
 	vccio6-supply = <&vcc_1v8>;
 	vccio7-supply = <&vcc_3v3>;
-};
-
-&pwm3 {
-        status = "disabled";
-};
-
-&pwm5 {
-        status = "disabled";
-};
-
-&pwm14 {
-	status = "disabled";
 };
 
 &rk_rga {
