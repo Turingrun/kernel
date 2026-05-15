@@ -76,14 +76,6 @@
         status = "okay";
 };
 
-&sdmmc2 {
-        max-frequency = <100000000>;
-        bus-width = <1>;
-        /delete-property/ sd-uhs-sdr104;
-        sd-uhs-sdr50;
-        status = "okay";
-};
-
 &pinctrl {
         usb-vbus {
                 usb_host_vbus:usb-host-vbus{
