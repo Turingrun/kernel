@@ -27,14 +27,6 @@
                 pinctrl-names = "default";
                 pinctrl-0 = <&usb_host_vbus>;
         };
-
-        pps {
-                status = "okay";
-                compatible = "pps-gpio";
-                pinctrl-names = "default";
-                pinctrl-0 = <&pps_gpio_pins>;
-                gpios = <&gpio3 RK_PB5 GPIO_ACTIVE_HIGH>;
-        };
 };
 
 
@@ -106,10 +98,4 @@
                         rockchip,pins = <3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
                 };
         };
-        pps_pins {
-                pps_gpio_pins: pps-gpio-pins {
-                rockchip,pins = <3 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
-                };
-        };
-
 };
