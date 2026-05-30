@@ -78,23 +78,6 @@
                 rockchip,jack-det;
         };
 
-	pdmics: dummy-codec {
-		status = "disabled";
-		compatible = "rockchip,dummy-codec";
-		#sound-dai-cells = <0>;
-	};
-
-	pdm_mic_array: pdm-mic-array {
-		status = "disabled";
-		compatible = "simple-audio-card";
-		simple-audio-card,name = "rockchip,pdm-mic-array";
-		simple-audio-card,cpu {
-			sound-dai = <&pdm>;
-		};
-		simple-audio-card,codec {
-			sound-dai = <&pdmics>;
-		};
-	};
 
 	vcc12v: vcc-12v {
 		compatible = "regulator-fixed";
@@ -194,11 +177,6 @@
 &combphy2_psq {
 	status = "okay";
 };
-
-&csi2_dphy_hw {
-	status = "okay";
-};
-
 
 
 &gmac0 {
@@ -315,42 +293,10 @@
         };
 };
 
-&rkisp {
-	status = "okay";
-};
-
-&rkisp_mmu {
-	status = "okay";
-};
-
 &bus_npu {
         bus-supply = <&vdd_logic>;
         pvtm-supply = <&vdd_cpu>;
         status = "okay";
-};
-
-&can0 {
-        assigned-clocks = <&cru CLK_CAN0>;
-        assigned-clock-rates = <200000000>;
-        pinctrl-names = "default";
-        pinctrl-0 = <&can0m0_pins>;
-        status = "disabled";
-};
-
-&can1 {
-        assigned-clocks = <&cru CLK_CAN1>;
-        assigned-clock-rates = <200000000>;
-        pinctrl-names = "default";
-        pinctrl-0 = <&can1m1_pins>;
-        status = "disabled";
-};
-
-&can2 {
-        assigned-clocks = <&cru CLK_CAN2>;
-        assigned-clock-rates = <150000000>;
-        pinctrl-names = "default";
-        pinctrl-0 = <&can2m1_pins>;
-        status = "disabled";
 };
 
 &cpu0 {
@@ -801,12 +747,6 @@
         status = "okay";
 };
 
-&spdif_8ch {
-	status = "disabled";
-	pinctrl-names = "default";
-	pinctrl-0 = <&spdifm1_tx>;
-};
-
 &tsadc {
         status = "okay";
 };
@@ -869,13 +809,6 @@
         status = "okay";
 };
 
-&vad {
-        rockchip,audio-src = <&i2s1_8ch>;
-        rockchip,buffer-time-ms = <128>;
-        rockchip,det-channel = <0>;
-        rockchip,mode = <0>;
-};
-
 &vdpu {
         status = "okay";
 };
@@ -903,26 +836,10 @@
 };
 
 
-
-
-&rgb_in_vp2 {
-        status = "disabled";
-};
-
 /*
  * video_phy1 needs to be enabled
  * when dsi1 is enabled
  */
-
-
-&dsi1_in_vp0 {
-	status = "disabled";
-};
-
-&dsi1_in_vp1 {
-	status = "disabled";
-};
-
 
 
 &hdmi {
@@ -971,36 +888,4 @@
         status = "okay";
         pinctrl-names = "default";
         pinctrl-0 = <&uart5m1_xfer>;
-};
-
-&spi0 {
-        pinctrl-names = "default", "high_speed";
-        pinctrl-0 = <&spi0m1_cs0 &spi0m1_pins>;
-        pinctrl-1 = <&spi0m1_cs0 &spi0m1_pins_hs>;
-        status = "disabled";
-
-        spi@0 {
-                compatible = "rockchip,spidev";
-                reg = <0>;
-                spi-max-frequency = <50000000>;
-        };
-};
-
-&spi2 {
-        pinctrl-names = "default", "high_speed";
-        pinctrl-0 = <&spi2m1_cs0 &spi2m1_cs1 &spi2m1_pins>;
-        pinctrl-1 = <&spi2m1_cs0 &spi2m1_cs1 &spi2m1_pins_hs>;
-        status = "okay";
-
-        spi@0 {
-                compatible = "rockchip,spidev";
-                reg = <0>;
-                spi-max-frequency = <50000000>;
-        };
-
-        spi@1 {
-                compatible = "rockchip,spidev";
-                reg = <1>;
-                spi-max-frequency = <50000000>;
-        };
 };
