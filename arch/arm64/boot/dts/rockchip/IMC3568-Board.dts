@@ -33,6 +33,7 @@
 &leds {
         user_led:user-led {
                 gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_HIGH>;
+                linux,default-trigger = "heartbeat";
         };
 };
 
