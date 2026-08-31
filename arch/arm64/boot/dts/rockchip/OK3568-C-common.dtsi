@@ -1246,6 +1246,11 @@
                 interrupts = <RK_PA0 IRQ_TYPE_EDGE_FALLING>;
                 touchscreen-size-x = <1024>;
                 touchscreen-size-y = <600>;
+                status = "disabled";
+        };
+        aht20@38{
+                compatible = "aosong,aht20";
+                reg = <0x38>;
                 status = "okay";
         };
 };
