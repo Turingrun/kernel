@@ -1510,7 +1510,6 @@ static inline void __stop_tx(struct uart_8250_port *p)
 
 	if (em485) {
 		unsigned char lsr = serial_in(p, UART_LSR);
-		unsigned char usr = serial_in(p,0x1f);
 		u64 stop_delay = 0;
 		p->lsr_saved_flags |= lsr & LSR_SAVE_FLAGS;
 
@@ -1520,13 +1519,12 @@ static inline void __stop_tx(struct uart_8250_port *p)
 		 * shift register are empty. It is for device driver to enable
 		 * interrupt on TEMT.
 		 */
-		 if(!(usr & BIT(2)))
-		 	return;
+		if(!(lsr & UART_LSR_THRE))
+			return;
 		if (!(lsr & UART_LSR_TEMT))
 		{
 			if(!(p->capabilities & UART_CAP_NOTEMT))
 				return;
-
 			stop_delay = p->port.frame_time + DIV_ROUND_UP(p->port.frame_time, 7);
 		}
 
