@@ -34,6 +34,11 @@
         };
 };
 
+&uart3 {
+	linux,rs485-enabled-at-boot-time;
+	rs485-de-gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_HIGH>;
+};
+
 &pinctrl {
 	pcf8563 {
 		pcf8563_int: pcf8563-int {
