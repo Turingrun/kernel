@@ -329,7 +329,7 @@ uart_update_timeout(struct uart_port *port, unsigned int cflag,
 		    unsigned int baud)
 {
 	unsigned int bits;
-
+	u64 frame_time;
 	/* byte size and parity */
 	switch (cflag & CSIZE) {
 	case CS5:
@@ -351,6 +351,8 @@ uart_update_timeout(struct uart_port *port, unsigned int cflag,
 	if (cflag & PARENB)
 		bits++;
 
+	frame_time = (u64)bits * NSEC_PER_SEC;
+    port->frame_time = DIV_ROUND_UP_ULL(frame_time, baud);
 	/*
 	 * The total number of bits to be transmitted in the fifo.
 	 */

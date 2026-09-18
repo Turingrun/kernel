@@ -9,6 +9,7 @@
  * LCR is written whilst busy.  If it is, then a busy detect interrupt is
  * raised, the LCR needs to be rewritten and the uart status register read.
  */
+#include <linux/gpio/consumer.h>
 #include <linux/delay.h>
 #include <linux/device.h>
 #include <linux/io.h>
@@ -53,6 +54,7 @@ struct dw8250_data {
 	struct notifier_block	clk_notifier;
 	struct work_struct	clk_work;
 	struct reset_control	*rst;
+	struct gpio_desc *rs485_de_gpio;
 
 #ifdef CONFIG_ARCH_ROCKCHIP
 	int			irq;
@@ -502,6 +504,31 @@ static void dw8250_reset_control_assert(void *data)
 	reset_control_assert(data);
 }
 
+static void dw8250_rs485_start_tx(struct uart_8250_port *up)
+{
+	struct uart_port *p = &up->port;
+	struct dw8250_data *data = to_dw8250_data(p->private_data);
+
+	if (!data->rs485_de_gpio)
+		return;
+
+	gpiod_set_value(data->rs485_de_gpio,
+			!!(p->rs485.flags & SER_RS485_RTS_ON_SEND));
+}
+
+static void dw8250_rs485_stop_tx(struct uart_8250_port *up)
+{
+	struct uart_port *p = &up->port;
+	struct dw8250_data *data =
+		to_dw8250_data(p->private_data);
+
+	if (!data->rs485_de_gpio)
+		return;
+
+	gpiod_set_value(data->rs485_de_gpio,
+			!!(p->rs485.flags & SER_RS485_RTS_AFTER_SEND));
+}
+
 static int dw8250_probe(struct platform_device *pdev)
 {
 	struct uart_8250_port uart = {}, *up = &uart;
@@ -535,7 +562,10 @@ static int dw8250_probe(struct platform_device *pdev)
 	p->serial_out	= dw8250_serial_out;
 	p->set_ldisc	= dw8250_set_ldisc;
 	p->set_termios	= dw8250_set_termios;
-
+	p->rs485_config = serial8250_em485_config;
+	up->rs485_start_tx = dw8250_rs485_start_tx;
+	up->rs485_stop_tx = dw8250_rs485_stop_tx;
+	
 	p->membase = devm_ioremap(dev, regs->start, resource_size(regs));
 	if (!p->membase)
 		return -ENOMEM;
@@ -543,6 +573,14 @@ static int dw8250_probe(struct platform_device *pdev)
 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
 	if (!data)
 		return -ENOMEM;
+	
+	data->rs485_de_gpio = devm_gpiod_get_optional(dev, "rs485-de", GPIOD_OUT_LOW);
+
+	if (IS_ERR(data->rs485_de_gpio)) {
+		err = PTR_ERR(data->rs485_de_gpio);
+		dev_err(dev, "failed to get RS485 direction GPIO: %d\n", err);
+		return err;
+	}
 
 	data->data.dma.fn = dw8250_fallback_dma_filter;
 	data->usr_reg = DW_UART_USR;
@@ -667,7 +705,7 @@ static int dw8250_probe(struct platform_device *pdev)
 		data->data.dma.txconf.dst_maxburst = p->fifosize / 4;
 		up->dma = &data->data.dma;
 	}
-
+	up->capabilities |= UART_CAP_NOTEMT;
 	data->data.line = serial8250_register_8250_port(up);
 	if (data->data.line < 0)
 		return data->data.line;

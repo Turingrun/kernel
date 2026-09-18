@@ -11,6 +11,9 @@
  *  membase is an 'ioremapped' cookie.
  */
 
+#include "asm-generic/int-ll64.h"
+#include "linux/dev_printk.h"
+#include "linux/serial_reg.h"
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/ioport.h>
@@ -1471,19 +1474,24 @@ static void start_hrtimer_ms(struct hrtimer *hrt, unsigned long msec)
 	hrtimer_start(hrt, t, HRTIMER_MODE_REL);
 }
 
-static void __stop_tx_rs485(struct uart_8250_port *p)
+static void __stop_tx_rs485(struct uart_8250_port *p,u64 stop_delay)
 {
 	struct uart_8250_em485 *em485 = p->em485;
 
+	stop_delay +=
+        (u64)p->port.rs485.delay_rts_after_send *
+        NSEC_PER_MSEC;
 	/*
 	 * rs485_stop_tx() is going to set RTS according to config
 	 * AND flush RX FIFO if required.
 	 */
-	if (p->port.rs485.delay_rts_after_send > 0) {
-		em485->active_timer = &em485->stop_tx_timer;
-		start_hrtimer_ms(&em485->stop_tx_timer,
-				   p->port.rs485.delay_rts_after_send);
-	} else {
+ if (stop_delay > 0) {
+        em485->active_timer = &em485->stop_tx_timer;
+
+        hrtimer_start(&em485->stop_tx_timer,
+                      ns_to_ktime(stop_delay),
+                      HRTIMER_MODE_REL);
+    } else {
 		p->rs485_stop_tx(p);
 		em485->active_timer = NULL;
 		em485->tx_stopped = true;
@@ -1502,6 +1510,8 @@ static inline void __stop_tx(struct uart_8250_port *p)
 
 	if (em485) {
 		unsigned char lsr = serial_in(p, UART_LSR);
+		unsigned char usr = serial_in(p,0x1f);
+		u64 stop_delay = 0;
 		p->lsr_saved_flags |= lsr & LSR_SAVE_FLAGS;
 
 		/*
@@ -1510,10 +1520,17 @@ static inline void __stop_tx(struct uart_8250_port *p)
 		 * shift register are empty. It is for device driver to enable
 		 * interrupt on TEMT.
 		 */
-		if ((lsr & BOTH_EMPTY) != BOTH_EMPTY)
-			return;
+		 if(!(usr & BIT(2)))
+		 	return;
+		if (!(lsr & UART_LSR_TEMT))
+		{
+			if(!(p->capabilities & UART_CAP_NOTEMT))
+				return;
 
-		__stop_tx_rs485(p);
+			stop_delay = p->port.frame_time + DIV_ROUND_UP(p->port.frame_time, 7);
+		}
+
+		__stop_tx_rs485(p,stop_delay);
 	}
 	__do_stop_tx(p);
 }
